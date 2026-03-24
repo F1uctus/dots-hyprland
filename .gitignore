@@ -15,3 +15,10 @@ __pycache__/
 
 # Emacs auto backup file
 *~
+
+# Machine-specific Hypr helper scripts (private URLs, hostnames, etc.)
+/dots/.config/hypr/custom/scripts/*.local.sh
+
+# Machine-private env (e.g. Headscale URL); optional fragments next to tracked examples
+/dots/.config/hypr/custom/env.private.d/99-local.conf
+/dots/.config/fish/config.local.fish

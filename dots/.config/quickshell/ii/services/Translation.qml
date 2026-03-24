@@ -28,7 +28,11 @@ Singleton {
         if (configLang !== "auto")
             return configLang;
 
-        return Qt.locale().name;
+        const localeName = Qt.locale().name;
+        // "C"/"POSIX" locales do not have translation files in this config.
+        if (localeName === "C" || localeName === "POSIX")
+            return "en_US";
+        return localeName;
     }
 
     TranslationScanner {

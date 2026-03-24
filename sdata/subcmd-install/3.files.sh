@@ -173,6 +173,40 @@ function install_google_sans_flex(){
   realpath -se "$target_dir" >> "${INSTALLED_LISTFILE}"
 }
 
+function ensure_hypr_env_private_d_readme(){
+  # `source=custom/env.private.d/*.conf` fails if no .conf files exist ("globbing error: found no match").
+  # `install_dir__skip_existed` does not add new paths under an existing ~/.config/hypr/custom, so seed this.
+  local readme_src="${REPO_ROOT}/dots/.config/hypr/custom/env.private.d/00-README.conf"
+  local dest_dir="${XDG_CONFIG_HOME}/hypr/custom/env.private.d"
+  [[ -f "$readme_src" ]] || return 0
+  x mkdir -p "$dest_dir"
+  v cp -f "$readme_src" "$dest_dir/00-README.conf"
+}
+
+function setup_asdf_defaults(){
+  if ! command -v asdf >/dev/null 2>&1; then
+    return 0
+  fi
+  if [[ ! -f "${HOME}/.tool-versions" ]]; then
+    return 0
+  fi
+
+  showfun setup_asdf_defaults
+  printf "${STY_CYAN}[$0]: Installing ASDF defaults from ~/.tool-versions.${STY_RST}\n"
+
+  local plugin version _rest
+  while read -r plugin version _rest; do
+    if [[ -z "${plugin}" ]] || [[ "${plugin:0:1}" == "#" ]]; then
+      continue
+    fi
+    if ! asdf plugin list 2>/dev/null | awk '{print $1}' | grep -qx "${plugin}"; then
+      v asdf plugin add "${plugin}"
+    fi
+  done < "${HOME}/.tool-versions"
+
+  v asdf install
+}
+
 #####################################################################################
 # In case some dirs does not exists
 for i in "$XDG_BIN_HOME" "$XDG_CACHE_HOME" "$XDG_CONFIG_HOME" "$XDG_DATA_HOME"; do
@@ -205,6 +239,15 @@ case "${EXPERIMENTAL_FILES_SCRIPT}" in
   *)source sdata/subcmd-install/3.files-legacy.sh;;
 esac
 
+showfun ensure_hypr_env_private_d_readme
+v ensure_hypr_env_private_d_readme
+
+# Keep a stable launcher entrypoint in PATH for TTY/DM startup flows.
+install_file "dots/.config/hypr/hyprland/scripts/hyprland-start.sh" "${XDG_BIN_HOME}/hyprland-start"
+v chmod +x "${XDG_BIN_HOME}/hyprland-start"
+
+v setup_asdf_defaults
+
 if [[ ! "$OS_GROUP_ID" == "fedora" ]]; then
   showfun install_google_sans_flex
   v install_google_sans_flex
@@ -218,6 +261,11 @@ v dedup_and_sort_listfile "${INSTALLED_LISTFILE}" "${INSTALLED_LISTFILE}"
 # Prevent hyprland from not fully loaded
 sleep 1
 try hyprctl reload
+if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+  # Apply updated launcher/runtime behavior immediately after install-files.
+  # Run through Hyprland so the shell inherits compositor session env.
+  try hyprctl dispatch exec "${HOME}/.config/hypr/hyprland/scripts/start_quickshell.sh ${qsConfig:-ii}"
+fi
 
 #####################################################################################
 printf "\n"

@@ -1,0 +1,24 @@
+From: F1uctus <ilya.i.nikitin@proton.me>
+Subject: Void/source build: Meson define + share-picker link hyprutils
+
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -2,7 +2,8 @@ src = globber.stdout().strip().split('\n')
+ 
+ executable('xdg-desktop-portal-hyprland',
+   [src],
++  cpp_args: ['-DXDPH_VERSION="' + meson.project_version() + '"'],
+   dependencies: [
+     client_protos,
+     dependency('gbm'),
+     dependency('hyprlang'),
+--- a/hyprland-share-picker/meson.build
++++ b/hyprland-share-picker/meson.build
+@@ -18,6 +18,6 @@ executable('hyprland-share-picker',
+   sources,
+   ui_files,
+   moc,
+-  dependencies: qtdep,
++  dependencies: [ qtdep, dependency('hyprutils') ],
+   install: true
+ )

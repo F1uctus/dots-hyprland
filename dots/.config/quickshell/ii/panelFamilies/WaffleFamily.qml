@@ -18,7 +18,6 @@ import qs.modules.waffle.taskView
 
 // Fallbacks
 import qs.modules.ii.cheatsheet
-import qs.modules.ii.onScreenKeyboard
 import qs.modules.ii.overlay
 import qs.modules.ii.wallpaperSelector
 
@@ -38,7 +37,6 @@ Scope {
     PanelLoader { component: WaffleTaskView {} }
 
     PanelLoader { component: Cheatsheet {} }
-    PanelLoader { component: OnScreenKeyboard {} }
     PanelLoader { component: Overlay {} }
     PanelLoader { component: WallpaperSelector {} }
 }

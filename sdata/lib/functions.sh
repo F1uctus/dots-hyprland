@@ -77,7 +77,12 @@ function remove_bashcomments_emptylines(){
 }
 function prevent_sudo_or_root(){
   case $(whoami) in
-    root) echo -e "${STY_RED}[$0]: This script is NOT to be executed with sudo or as root. Aborting...${STY_RST}";exit 1;;
+    root)
+      if [[ "${ALLOW_ROOT_SETUP:-}" == "true" ]]; then
+        echo -e "${STY_YELLOW}[$0]: ALLOW_ROOT_SETUP=true — continuing as root (not recommended).${STY_RST}"
+        return 0
+      fi
+      echo -e "${STY_RED}[$0]: This script is NOT to be executed with sudo or as root. Aborting...${STY_RST}";exit 1;;
   esac
 }
 

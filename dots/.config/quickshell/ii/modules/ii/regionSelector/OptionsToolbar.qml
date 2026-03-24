@@ -20,8 +20,33 @@ Toolbar {
     // Use a synchronizer on these
     property var action
     property var selectionMode
+    property bool updatingSelectionMode: false
+    property bool updatingTabIndex: false
     // Signals
     signal dismiss()
+
+    function selectionModeToIndex(mode) {
+        return mode === RegionSelection.SelectionMode.RectCorners ? 0 : 1;
+    }
+
+    function indexToSelectionMode(index) {
+        return index === 0 ? RegionSelection.SelectionMode.RectCorners : RegionSelection.SelectionMode.Circle;
+    }
+
+    Component.onCompleted: {
+        updatingTabIndex = true;
+        tabBar.setCurrentIndex(selectionModeToIndex(root.selectionMode));
+        updatingTabIndex = false;
+    }
+
+    onSelectionModeChanged: {
+        if (updatingSelectionMode) return;
+        const nextIndex = selectionModeToIndex(root.selectionMode);
+        if (tabBar.currentIndex === nextIndex) return;
+        updatingTabIndex = true;
+        tabBar.setCurrentIndex(nextIndex);
+        updatingTabIndex = false;
+    }
 
     ToolbarTabBar {
         id: tabBar
@@ -29,9 +54,13 @@ Toolbar {
             {"icon": "activity_zone", "name": Translation.tr("Rect")},
             {"icon": "gesture", "name": Translation.tr("Circle")}
         ]
-        currentIndex: root.selectionMode === RegionSelection.SelectionMode.RectCorners ? 0 : 1
         onCurrentIndexChanged: {
-            root.selectionMode = currentIndex === 0 ? RegionSelection.SelectionMode.RectCorners : RegionSelection.SelectionMode.Circle;
+            if (root.updatingTabIndex) return;
+            const nextSelectionMode = root.indexToSelectionMode(currentIndex);
+            if (root.selectionMode === nextSelectionMode) return;
+            root.updatingSelectionMode = true;
+            root.selectionMode = nextSelectionMode;
+            root.updatingSelectionMode = false;
         }
     }
 }

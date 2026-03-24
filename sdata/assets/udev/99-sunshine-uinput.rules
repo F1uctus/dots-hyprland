@@ -1,0 +1,3 @@
+# Sunshine / Moonlight: virtual keyboard, mouse, gamepad via uinput.
+# User must be in the "input" group (dotfiles setup adds this).
+KERNEL=="uinput", GROUP="input", MODE="0660", OPTIONS+="static_node=uinput"

@@ -86,11 +86,22 @@ Item {
 
     // Scroll to switch workspaces
     WheelHandler {
+        property int wheelDebounceMs: 80
+        property double lastWheelAtMs: 0
         onWheel: (event) => {
+            const now = Date.now();
+            if (now - lastWheelAtMs < wheelDebounceMs) {
+                event.accepted = true;
+                return;
+            }
+            lastWheelAtMs = now;
             if (event.angleDelta.y < 0)
                 Hyprland.dispatch(`workspace r+1`);
-            else if (event.angleDelta.y > 0)
-                Hyprland.dispatch(`workspace r-1`);
+            else if (event.angleDelta.y > 0) {
+                if (root.effectiveActiveWorkspaceId > 1)
+                    Hyprland.dispatch(`workspace r-1`);
+            }
+            event.accepted = true;
         }
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     }

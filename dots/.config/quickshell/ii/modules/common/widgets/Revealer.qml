@@ -8,10 +8,11 @@ Item {
     id: root
     property bool reveal
     property bool vertical: false
+    readonly property Item contentItem: children.length > 0 ? children[0] : null
     clip: true
 
-    implicitWidth: (reveal || vertical) ? childrenRect.width : 0
-    implicitHeight: (reveal || !vertical) ? childrenRect.height : 0
+    implicitWidth: (reveal || vertical) ? (contentItem ? contentItem.implicitWidth : 0) : 0
+    implicitHeight: (reveal || !vertical) ? (contentItem ? contentItem.implicitHeight : 0) : 0
     visible: reveal || (width > 0 && height > 0)
 
     Behavior on implicitWidth {

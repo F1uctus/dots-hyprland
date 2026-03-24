@@ -12,6 +12,8 @@ MouseArea { // Right side | scroll to change volume
     property real lastScrollY: 0
     property bool trackingScroll: false
     property real moveThreshold: 20
+    property int wheelDebounceMs: 65
+    property double lastWheelAtMs: 0
 
     acceptedButtons: Qt.LeftButton
     hoverEnabled: true
@@ -26,6 +28,12 @@ MouseArea { // Right side | scroll to change volume
     }
 
     onWheel: event => {
+        const now = Date.now();
+        if (now - root.lastWheelAtMs < root.wheelDebounceMs) {
+            event.accepted = true;
+            return;
+        }
+        root.lastWheelAtMs = now;
         if (event.angleDelta.y < 0)
             root.scrollDown(event.angleDelta.y);
         else if (event.angleDelta.y > 0)

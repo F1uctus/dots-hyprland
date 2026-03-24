@@ -1,3 +1,8 @@
+set -l _dots_fish_config (status filename)
+if test -f (path dirname $_dots_fish_config)/config.local.fish
+    source (path dirname $_dots_fish_config)/config.local.fish
+end
+
 # Commands to run in interactive sessions can go here
 if status is-interactive
     # No greeting

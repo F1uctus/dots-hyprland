@@ -222,7 +222,7 @@ DelegateChooser {
         cellSize: modelData.size
     } }
 
-    DelegateChoice { roleValue: "onScreenKeyboard"; AndroidOnScreenKeyboardToggle {
+    DelegateChoice { roleValue: "opendrop"; AndroidOpenDropToggle {
         required property int index
         required property var modelData
         buttonIndex: root.startingIndex + index

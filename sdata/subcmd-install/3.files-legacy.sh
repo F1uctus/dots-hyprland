@@ -34,6 +34,8 @@ case "${SKIP_FISH}" in
     ;;
 esac
 
+install_file "dots/.tool-versions" "${HOME}/.tool-versions"
+
 case "${SKIP_FONTCONFIG}" in
   true) sleep 0;;
   *)

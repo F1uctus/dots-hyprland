@@ -253,7 +253,6 @@ Singleton {
                     property bool showScreenSnip: true
                     property bool showColorPicker: false
                     property bool showMicToggle: false
-                    property bool showKeyboardToggle: true
                     property bool showDarkModeToggle: true
                     property bool showPerformanceProfileToggle: false
                     property bool showScreenRecord: false
@@ -390,7 +389,7 @@ Singleton {
 
             property JsonObject media: JsonObject {
                 // Attempt to remove dupes (the aggregator playerctl one and browsers' native ones when there's plasma browser integration)
-                property bool filterDuplicatePlayers: true
+                property bool filterDuplicatePlayers: false
             }
 
             property JsonObject networking: JsonObject {
@@ -403,11 +402,6 @@ Singleton {
 
             property JsonObject osd: JsonObject {
                 property int timeout: 1000
-            }
-
-            property JsonObject osk: JsonObject {
-                property string layout: "qwerty_full"
-                property bool pinnedOnStartup: false
             }
 
             property JsonObject overlay: JsonObject {
@@ -529,6 +523,7 @@ Singleton {
                             { "size": 2, "type": "bluetooth"  },
                             { "size": 1, "type": "idleInhibitor" },
                             { "size": 1, "type": "mic" },
+                            { "size": 1, "type": "opendrop" },
                             { "size": 2, "type": "audio" },
                             { "size": 2, "type": "nightLight" }
                         ]
@@ -618,7 +613,7 @@ Singleton {
                     property bool leftAlignApps: false
                 }
                 property JsonObject actionCenter: JsonObject {
-                    property list<string> toggles: [ "network", "bluetooth", "easyEffects", "powerProfile", "idleInhibitor", "nightLight", "darkMode", "antiFlashbang", "cloudflareWarp", "mic", "musicRecognition", "notifications", "onScreenKeyboard", "gameMode", "screenSnip", "colorPicker" ]
+                    property list<string> toggles: [ "network", "bluetooth", "easyEffects", "powerProfile", "idleInhibitor", "nightLight", "darkMode", "antiFlashbang", "cloudflareWarp", "mic", "musicRecognition", "notifications", "gameMode", "screenSnip", "colorPicker" ]
                 }
                 property JsonObject calendar: JsonObject {
                     property bool force2CharDayOfWeek: true
